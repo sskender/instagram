@@ -32,7 +32,7 @@ function register(&$username,&$email,&$hashed_password) {
      *      -1 ... database error
      *      -2 ... username exists
      *      -3 ... email exists
-     *       x ... any number that represents user id
+     *       x ... any number that stands for user id
      */
 
     $query = "SELECT 

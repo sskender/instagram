@@ -15,6 +15,7 @@ define("DBNAME", "instagram");
  */
 define("SRC_PATH",      "../resources/src/");
 define("INCLUDES_PATH", "../resources/includes/");
+define("LIB_PATH",      "../resources/lib/");
 
 
 /*

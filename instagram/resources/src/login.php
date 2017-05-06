@@ -2,36 +2,23 @@
 
 
 /*
- *  Login
- *  Set session
- *  Redirect to user's home page
+ *
  */
-$db_con = @mysqli_connect(HOST,USER,PASS,DBNAME);
-$query  = "SELECT user_id FROM users WHERE (
-            (email='$username' OR username='$username') AND password='$hashed_password'
-            )";
+ 
+require_once("database.php");
 
-$response = @mysqli_query($db_con, $query);
-@mysqli_close($db_con);
+function login(&$username,&$hashed_password) {
+    $query  = "SELECT user_id FROM users WHERE (
+                    (email='$username' OR username='$username') AND password='$hashed_password'
+                )";
+    $response = db_query($query);
 
-if ($response) {
+    if (@mysqli_num_rows($response) == 1) {
 
-    if (mysqli_num_rows($response) == 1) {
-        // success
-        // redirect
-        session_start();
-        $_SESSION["user_id"] = mysqli_fetch_array($response)["user_id"];
-        header("Location: home.php");
-        exit();
-
-    } else {
-        // invalid credentials
-        $login_error = "Wrong user or password!";
+        $user_id = mysqli_fetch_array($response)["user_id"];
+        return (integer)$user_id;
     }
-
-} else {
-    // sql error
-    $login_error = "Database in maintenance!";
+    return false;
 }
 
 

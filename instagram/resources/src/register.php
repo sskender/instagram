@@ -2,70 +2,78 @@
 
 
 /*
- *  Register
- *  Set session
- *  Redirect to user's home page
+ *
  */
-$new_user_id = NULL;
-$db_con = @mysqli_connect(HOST,USER,PASS,DBNAME);
 
-$query = "SELECT 
-                SUM(CASE WHEN username='$username' THEN 1 ELSE 0 END) count_users,
-                SUM(CASE WHEN email='$email'       THEN 1 ELSE 0 END) count_emails
-                    FROM users";
+require_once("database.php");
 
-$response     = @mysqli_query($db_con, $query);
-$data         = @mysqli_fetch_array($response);
-$count_users  = $data["count_users"];
-$count_emails = $data["count_emails"];
+function fetchNewUserID(&$username) {
 
-if ($count_users > 0) {
-    $register_error = "Username already in use!";
-
-} elseif ($count_emails > 0) {
-    $register_error = "E-Mail already in use!";
-
-} else {
-    /*
-     *  Actual registration
-     */
-
-    // insert into table
-    $query = "INSERT INTO users (
-                username,
-                password,
-                email
-                ) VALUES (
-                    '$username',
-                    '$hashed_password',
-                    '$email'
-                    )";
-    $response = @mysqli_query($db_con, $query);
-
-    // grab new id
     $query = "SELECT user_id FROM users WHERE username='$username'";
-    $response = @mysqli_query($db_con, $query);
+    $response = db_query($query);
 
-    $new_user_id = (integer)@mysqli_fetch_array($response)["user_id"];
+    if ($response) {
 
-    if ($new_user_id != NULL && $new_user_id != false) {
-        // registration successfull
-
-        // clean up
-        @mysqli_close($db_con);
-        
-        // redirect
-        session_start();
-        $_SESSION["user_id"] = $new_user_id;
-        header("Location: home.php");
-        exit();
-
-    } else {
-        $register_error = "Database in maintenance!";
+        if (mysqli_num_rows($response) > 0) {
+            $new_user_id = (integer)mysqli_fetch_array($response)["user_id"];
+            return $new_user_id;
+        }
+    
     }
+
+    return -1;
 }
 
-@mysqli_close($db_con);
+
+function register(&$username,&$email,&$hashed_password) {
+
+    /*
+     *  Return codes:
+     *      -1 ... database error
+     *      -2 ... username exists
+     *      -3 ... email exists
+     *       x ... any number that represents user id
+     */
+
+    $query = "SELECT 
+                    SUM(CASE WHEN username='$username' THEN 1 ELSE 0 END) count_users,
+                    SUM(CASE WHEN email='$email'       THEN 1 ELSE 0 END) count_emails
+                        FROM users";
+    $response = db_query($query);
+
+    if ($response) {
+
+        $data         = mysqli_fetch_array($response);
+        $count_users  = $data["count_users"];
+        $count_emails = $data["count_emails"];
+
+        if ($count_users > 0) {
+            return -2;
+        }
+        if ($count_emails > 0) {
+            return -3;
+        }
+
+        $query = "INSERT INTO users (
+                        username,
+                        password,
+                        email
+                        ) VALUES (
+                            '$username',
+                            '$hashed_password',
+                            '$email'
+                            )";
+        $response = db_query($query);
+
+        if ($response) {
+            return fetchNewUserID($username);
+        }
+
+    }
+    
+    return -1;
+
+}
 
 
 ?>

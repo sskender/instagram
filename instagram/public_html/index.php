@@ -9,35 +9,41 @@ $login_error = $register_error = NULL;
  */
 if (isset($_POST["submit_login"])) {
 
-    $all_good = true;
     $username = trim($_POST["username"]);
     $password = $_POST["password"];
 
-    // check username or email
-    if (preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username)) {
-
-    }
-    elseif (filter_var($username, FILTER_VALIDATE_EMAIL)) {
-
-    }
-    else {
-        $login_error = "Invalid username!";
-        $all_good = false;
+    if (preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username) || filter_var($username, FILTER_VALIDATE_EMAIL)) {
+        // username or email OK
+    } else {
+        $login_error = "Invalid username or password!";
     }
 
-    // check password
-    if (!preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password)) {
-        $login_error = ($login_error == NULL) ? "Invalid password!" : "Invalid username and password!";
-        $all_good = false;
+    if (preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password)) {
+        // password OK
+    } else {
+        $login_error = "Invalid username or password!";
     }
 
-    // if all good proceed with login
-    if ($all_good) {
+    // proceed with login
+    if ($login_error == NULL) {
+
+        require_once(SRC_PATH."login.php");
 
         $hashed_password = hash("sha256",$password);
-        require_once(SRC_PATH."login.php");
-    }
+        $login_result = login($username,$hashed_password);
 
+        if ($login_result) {
+
+            session_start();
+            $_SESSION["user_id"] = $login_result;
+            header("Location: home.php");
+            exit();
+
+        } else {
+            $login_error = "Invalid username or password!";
+        }
+
+    }
 }
 
 
@@ -46,7 +52,6 @@ if (isset($_POST["submit_login"])) {
  */
 if (isset($_POST["submit_register"])) {
 
-    $all_good  = true;
     $username  = trim($_POST["usernamesignup"]);
     $email     = $_POST["emailsignup"];
     $password1 = $_POST["passwordsignup"];
@@ -55,30 +60,52 @@ if (isset($_POST["submit_register"])) {
     // check passwords
     if (!preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password1) || !preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password2)) {
         $register_error = "Invalid password!";
-        $all_good = false;
     }
     elseif ($password1 != $password2) {
         $register_error = "Passwords do not match!";
-        $all_good = false;
     }
 
     // check email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $register_error = "Invalid E-Mail address!";
-        $all_good = false;
     }
 
     // check username
     if (!preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username)) {
         $register_error = "Invalid username!";
-        $all_good = false;
     }
 
-    // check if all_good
-    if ($all_good) {
+    // proceed with register
+    if ($register_error == NULL) {
+
+        require_once(SRC_PATH."register.php");
 
         $hashed_password = hash("sha256",$password1);
-        require_once(SRC_PATH."register.php");
+        $register_result = register($username,$email,$hashed_password);
+
+        // codes explained in register.php
+        switch ($register_result) {
+
+            case -1:
+                $register_error = "Database in maintenance!";
+                break;
+
+            case -2:
+                $register_error = "Username already in use!";
+                break;
+            
+            case -3:
+                $register_error = "E-Mail already in use!";
+                break;
+
+            default:
+                session_start();
+                $_SESSION["user_id"] = $register_result;
+                header("Location: home.php");
+                exit();
+
+        }
+        
     }
 
 }

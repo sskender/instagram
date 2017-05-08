@@ -1,0 +1,35 @@
+.user_block {
+    padding-left: 50px;
+}
+
+.user_block #profile_pic {
+    float: left;
+}
+
+.user_block #follow {
+    padding-left: 120px;
+}
+
+.user_block h4 {
+    padding-left: 100px;
+}
+
+
+#profile_pic {
+    border: 1px solid lightgrey;
+}
+
+
+.main-menu input, button, submit {
+    background:none;
+    border:none;
+    text-decoration: none;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 300;
+}
+
+
+#profile-update-button {
+    width: 200px;
+}

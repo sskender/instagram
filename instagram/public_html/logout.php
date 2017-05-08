@@ -1,7 +1,7 @@
 <?php
 
 
-/*
+/**
  *  Destroy session,
  *  Redirect to index page
  */

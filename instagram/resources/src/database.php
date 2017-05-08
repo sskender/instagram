@@ -1,13 +1,13 @@
 <?php
 
 
-/*
+/**
  *
  */
 
 function db_connect() {
 
-    static $connection; // avoid connecting more than once
+    static $connection; /* Avoid connecting more than once */
 
     if (!isset($connection)) {
         $connection = mysqli_connect(HOST,USER,PASS,DBNAME);

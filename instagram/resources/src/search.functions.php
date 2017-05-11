@@ -25,7 +25,7 @@ function displayBlock(&$user_found) {
  */
 function searchDatabase(&$user_searched) {
 
-    $query = "SELECT user_id FROM users WHERE (username LIKE '%$user_searched%' OR email LIKE '%$user_searched%')";
+    $query = "SELECT user_id FROM users WHERE (username LIKE '%$user_searched%' OR email='$user_searched')";
     $response = db_query($query);
 
     if ($response) {

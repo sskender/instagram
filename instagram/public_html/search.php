@@ -10,7 +10,7 @@ require_once(SRC_PATH."search.functions.php");
         <section>
             <div class="container small">
                 <header>
-                    <h3><?php echo $title; ?></h3>
+                    <h3>Find people you know</h3>
                 </header>
                 <form method="get" action="?" class="contact-form">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">

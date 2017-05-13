@@ -8,6 +8,10 @@ require(INCLUDES_PATH."header.php");
 
 <?php
 
+/**
+ *  Validate user in URL
+ *  If user is invalid, redirect to profile page
+ */
 if (!empty($_GET["user"])) {
 
     $redirect_page = true;
@@ -42,13 +46,13 @@ if (!empty($_GET["user"])) {
             <p>Uploads: <acronym title="View uploads"><a><span><?php echo $user_current_profile->uploaded_photos_number; ?></span></a></acronym></p>
             <?php if($user_logged_in->user_id == $user_current_profile->user_id) { ?>
             <p>E-Mail address: <a><span><?php echo $user_current_profile->email; ?></span></a></p>
-            <p>Last login on <a><span><?php echo $user_current_profile->last_login_time; ?></span></a> from <a><span><?php echo $user_current_profile->last_login_ip; ?></span></a></p>
+            <p>Last login on <a><span><?php echo $user_current_profile->last_login_time->format("d/m/Y H:i"); ?></span></a> from <a><span><?php echo $user_current_profile->last_login_ip; ?></span></a></p>
             <?php } ?>
 
             <?php
-            /*
-                *  Follow button integration
-                */
+            /**
+             *  Follow button integration
+             */
             if($user_logged_in->user_id != $user_current_profile->user_id) {
                 
                 $follow_button_name = NULL;

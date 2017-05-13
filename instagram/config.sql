@@ -50,3 +50,12 @@ CREATE TABLE uploads (
     photo_hash      VARCHAR(50)         NOT NULL,
     timestamp       DATETIME            NOT NULL    DEFAULT NOW(),
 );
+
+
+-- LOGINS TABLE
+CREATE TABLE logs (
+    log_id          INTEGER UNSIGNED    NOT NULL    AUTO_INCREMENT  PRIMARY KEY,
+    user_id         INTEGER UNSIGNED    NOT NULL,
+    ip              VARCHAR(15)         NOT NULL,
+    timestamp       DATETIME            NOT NULL    DEFAULT NOW()
+);

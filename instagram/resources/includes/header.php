@@ -74,7 +74,7 @@ if (!isset($_SESSION["user_id"])) {
                 </div>
                 <nav class="main-menu">
                     <ul>
-                        <li><form action="#"><input type="submit" value="Upload"></form></li>
+                        <li><form action="upload.php"><input type="submit" value="Upload"></form></li>
                         <li><a href="search.php">Search</a></li>
                         <li><a href="profile.php" class="external">Profile</a></li>
                         <li><a href="logout.php">Logout</a></li>

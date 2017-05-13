@@ -1,10 +1,23 @@
 <?php
 
+
+/**
+ *  If user is already logged in redirect to home page
+ */
+session_start();
+if (isset($_SESSION["user_id"])) {
+    header("Location: home.php");
+}
+
+
+
 require_once("../config.php");
+require_once(SRC_PATH."login.register.php");
 $login_error = $register_error = NULL;
+$value_user = $value_email = NULL;
 
 
-/*
+/**
  *  Login
  */
 if (isset($_POST["submit_login"])) {
@@ -12,33 +25,33 @@ if (isset($_POST["submit_login"])) {
     $username = trim($_POST["username"]);
     $password = $_POST["password"];
 
-    if (preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username) || filter_var($username, FILTER_VALIDATE_EMAIL)) {
-        // username or email OK
-    } else {
+    if (!preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL)) {
         $login_error = "Invalid username or password!";
     }
 
-    if (preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password)) {
-        // password OK
-    } else {
+    if (!preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password)) {
         $login_error = "Invalid username or password!";
     }
 
     // proceed with login
     if ($login_error == NULL) {
 
-        require_once(SRC_PATH."login.php");
-
         $hashed_password = hash("sha256",$password);
-        $login_result = login($username,$hashed_password);
+        $login_result = login($username,$hashed_password);  /* login_result is either user_id or 0 (false) */
 
+        // valid login
         if ($login_result) {
 
+            // log
+            logLogin($login_result);
+
+            // user session
             session_start();
             $_SESSION["user_id"] = $login_result;
             header("Location: home.php");
             exit();
 
+        // invalid login
         } else {
             $login_error = "Invalid username or password!";
         }
@@ -47,7 +60,7 @@ if (isset($_POST["submit_login"])) {
 }
 
 
-/*
+/**
  *  Register
  */
 if (isset($_POST["submit_register"])) {
@@ -68,20 +81,23 @@ if (isset($_POST["submit_register"])) {
     // check email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $register_error = "Invalid E-Mail address!";
+    } else {
+        $value_email = $email;
     }
 
     // check username
     if (!preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username)) {
         $register_error = "Invalid username!";
+    } else {
+        $value_user = $username;
     }
+
 
     // proceed with register
     if ($register_error == NULL) {
 
-        require_once(SRC_PATH."register.php");
-
         $hashed_password = hash("sha256",$password1);
-        $register_result = register($username,$email,$hashed_password);
+        $register_result = register($username,$email,$hashed_password);  /* register_result is either user_id or 0 (false) */
 
         // codes explained in register.php
         switch ($register_result) {
@@ -99,11 +115,14 @@ if (isset($_POST["submit_register"])) {
                 break;
 
             default:
+                // log
+                logLogin($register_result);
+
+                // user session
                 session_start();
                 $_SESSION["user_id"] = $register_result;
                 header("Location: home.php");
                 exit();
-
         }
         
     }
@@ -114,9 +133,11 @@ if (isset($_POST["submit_register"])) {
 
 
 
+<!DOCTYPE html>
 <html>
     <head>
         <title>Welcome to Instagram</title>
+        <meta charset="utf-8">
         <meta name="description" content="Login and registration">
         <link rel="stylesheet" type="text/css" href="css/indexpage.css">
         <link rel="stylesheet" type="text/css" href="css/indexpage-animation.css">
@@ -161,11 +182,11 @@ if (isset($_POST["submit_register"])) {
                                 <h1> Sign up </h1> 
                                 <p> 
                                     <label for="usernamesignup" class="uname" data-icon="u">Your username</label>
-                                    <input id="usernamesignup" name="usernamesignup" required="required" type="text" placeholder="mysuperusername690" />
+                                    <input id="usernamesignup" name="usernamesignup" required="required" type="text" value="<?php echo $value_user; ?>"placeholder="mysuperusername690" />
                                 </p>
                                 <p> 
                                     <label for="emailsignup" class="youmail" data-icon="e" > Your email</label>
-                                    <input id="emailsignup" name="emailsignup" required="required" type="email" placeholder="mysupermail@mail.com"/> 
+                                    <input id="emailsignup" name="emailsignup" required="required" type="email" value="<?php echo $value_email; ?>" placeholder="mysupermail@mail.com"/> 
                                 </p>
                                 <p> 
                                     <label for="passwordsignup" class="youpasswd" data-icon="p">Your password </label>

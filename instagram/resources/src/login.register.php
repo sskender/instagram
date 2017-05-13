@@ -1,11 +1,44 @@
 <?php
 
 
-/*
- *
+/**
+ *  Functions required for login and registration
  */
 
 require_once("database.php");
+
+
+function login(&$username,&$hashed_password) {
+
+    $query  = "SELECT user_id FROM users WHERE (
+                    (email='$username' OR username='$username') AND password='$hashed_password'
+                )";
+    $response = db_query($query);
+
+    if ($response) {
+
+        if (mysqli_num_rows($response) == 1) {
+            $user_id = mysqli_fetch_array($response)["user_id"];
+            return (integer)$user_id;
+        }
+    }
+
+    return false;
+}
+
+
+function logLogin(&$user_id) {
+
+    $ip = $_SERVER["REMOTE_ADDR"];
+    $query = "INSERT INTO logs (user_id,ip) VALUES ($user_id,'$ip')";
+    $response = db_query($query);
+
+    return $response;
+}
+
+
+
+
 
 function fetchNewUserID(&$username) {
 
@@ -27,7 +60,7 @@ function fetchNewUserID(&$username) {
 
 function register(&$username,&$email,&$hashed_password) {
 
-    /*
+    /**
      *  Return codes:
      *      -1 ... database error
      *      -2 ... username exists

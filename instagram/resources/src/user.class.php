@@ -53,6 +53,7 @@ class User {
 
             $this->getFollowers();
             $this->getFollowing();
+            $this->getLastLoginInfo();
 
         }
 
@@ -101,6 +102,29 @@ class User {
         }
 
         $this->following_number = count($this->following_list);
+    }
+
+
+    private function getLastLoginInfo() {
+        /**
+         *  Grab informations about last login:
+         *      - Time
+         *      - IP address
+         */
+        
+        $query = "SELECT * FROM logs WHERE user_id=$this->user_id ORDER BY log_id DESC LIMIT 1";
+        $response = db_query($query);
+
+        if ($response) {
+
+            $data = mysqli_fetch_array($response);
+            $this->last_login_ip   = $data["ip"];
+            $this->last_login_time = new DateTime($data["timestamp"]);
+
+        } else {
+            $this->last_login_ip   = $_SERVER["REMOTE_ADDR"];
+            $this->last_login_time = new DateTime();
+        }
     }
 
 

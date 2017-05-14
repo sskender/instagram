@@ -264,45 +264,31 @@ class User {
     /**
      *  Upload related stuff
      */
-    private function _generatePhotoName($extension) {
-        
-        $start = (string)$this->user_id;
-        $hash  = uniqid("",true).uniqid("",true);
-    
-        return $start . "_" . $hash . "." . $extension;
-    }
+    public function uploadPhoto($hash) {
+        $query = "INSERT INTO uploads (
+                        user_id, 
+                        photo_hash
+                            ) VALUES (
+                                $this->user_id,
+                                '$hash'
+                                    )";
+        $response = db_query($query);
 
-    public function uploadPhoto($file) {
-        
-        $extension = end(explode(".",$file["name"]));
-        do {
-            $hash = $this->_generatePhotoName($extension);
-        } while (file_exists(UPLOAD_PHOTO_PATH.$hash));
+        if ($response) {
 
-        if (move_uploaded_file($file["tmp_name"], UPLOAD_PHOTO_PATH.$hash)) {
-
-            $query = "INSERT INTO uploads (
-                            user_id, 
-                            photo_hash
-                                ) VALUES (
-                                    $this->user_id,
-                                    '$hash'
-                                        )";
-            $response = db_query($query);
-
-            if ($response) {
-                return true;
-            }
+            $this->uploaded_photos_number++;
+            return true;
             
+        } else {
+            return false;
         }
 
-        return false;
     }
 
 
 
     /**
-     *
+     *  
      */
     public function dumpHomePosts() {
 
@@ -313,12 +299,10 @@ class User {
         if ($response) {
 
             while ($row = mysqli_fetch_array($response)) {
-
                 yield $row;
             }
 
         } else {
-
 
         }
     }

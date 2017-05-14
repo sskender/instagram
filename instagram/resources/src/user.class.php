@@ -54,6 +54,7 @@ class User {
             $this->getFollowers();
             $this->getFollowing();
             $this->getLastLoginInfo();
+            $this->getNumberOfUploads();
 
         }
 
@@ -102,6 +103,20 @@ class User {
         }
 
         $this->following_number = count($this->following_list);
+    }
+
+
+    private function getNumberOfUploads() {
+
+        $query = "SELECT COUNT(photo_id) AS total FROM uploads WHERE user_id=$this->user_id";
+        $response = db_query($query);
+
+        if ($response) {
+            $this->uploaded_photos_number = (integer)mysqli_fetch_array($response)["total"];
+
+        } else {
+            $this->uploaded_photos_number = 0;
+        }
     }
 
 
@@ -191,7 +206,7 @@ class User {
 
         if ($response) {
 
-            $position = array_search($other_user->user_id, $following_list);
+            $position = array_search($other_user->user_id, $this->following_list);
             if ($position !== false) {
                 unset($this->following_list[$position]);
                 $this->following_number--;
@@ -241,6 +256,70 @@ class User {
              *  Database error occurred
              */
             return -1;
+        }
+    }
+
+
+
+    /**
+     *  Upload related stuff
+     */
+    private function _generatePhotoName($extension) {
+        
+        $start = (string)$this->user_id;
+        $hash  = uniqid("",true).uniqid("",true);
+    
+        return $start . "_" . $hash . "." . $extension;
+    }
+
+    public function uploadPhoto($file) {
+        
+        $extension = end(explode(".",$file["name"]));
+        do {
+            $hash = $this->_generatePhotoName($extension);
+        } while (file_exists(UPLOAD_PHOTO_PATH.$hash));
+
+        if (move_uploaded_file($file["tmp_name"], UPLOAD_PHOTO_PATH.$hash)) {
+
+            $query = "INSERT INTO uploads (
+                            user_id, 
+                            photo_hash
+                                ) VALUES (
+                                    $this->user_id,
+                                    '$hash'
+                                        )";
+            $response = db_query($query);
+
+            if ($response) {
+                return true;
+            }
+            
+        }
+
+        return false;
+    }
+
+
+
+    /**
+     *
+     */
+    public function dumpHomePosts() {
+
+        $followingIDs = implode(",", $this->following_list) . "," . (string)$this->user_id;
+        $query = "SELECT * FROM uploads WHERE user_id IN ($followingIDs) ORDER BY photo_id DESC";
+        $response = db_query($query);
+
+        if ($response) {
+
+            while ($row = mysqli_fetch_array($response)) {
+
+                yield $row;
+            }
+
+        } else {
+
+
         }
     }
 

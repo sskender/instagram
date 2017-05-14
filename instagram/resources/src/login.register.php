@@ -5,9 +5,6 @@
  *  Functions required for login and registration
  */
 
-require_once("database.php");
-
-
 function login(&$username,&$hashed_password) {
 
     $query  = "SELECT user_id FROM users WHERE (

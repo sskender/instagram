@@ -1,31 +1,3 @@
-<?php
-
-
-/**
- *  Redirect to index page if user is not logged in
- */
-
-session_start();
-
-if (!isset($_SESSION["user_id"])) {
-    
-    session_destroy();
-    header("Location: index.php");
-
-} else {
-
-    require_once(SRC_PATH."database.php");
-    require_once(SRC_PATH."user.class.php");
-
-    $user_logged_in = new User($_SESSION["user_id"]);
-
-}
-
-
-?>
-
-
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -39,6 +11,8 @@ if (!isset($_SESSION["user_id"])) {
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/templatemo-style.css">
         <link rel="stylesheet" type="text/css" href="css/profilepage-custom.css">
+        <link rel="stylesheet" type="text/css" href="css/upload-button.css">
+        <script src="js/upload.msg.js"></script>
         <script src="js/jquery.min.js"></script>
         <script>
             // Check scroll position and add/remove background to navbar
@@ -74,7 +48,14 @@ if (!isset($_SESSION["user_id"])) {
                 </div>
                 <nav class="main-menu">
                     <ul>
-                        <li><form action="upload.php"><input type="submit" value="Upload"></form></li>
+                        <li>
+                            <form action="upload.php" method="post" enctype="multipart/form-data">
+                                <div class="file-upload">
+                                    <label for="upload" class="file-upload__label">Upload</label>
+                                    <input id="upload" class="file-upload__input" type="file" name="file-upload" onchange="this.form.submit()">
+                                </div>
+                            </form>
+                        </li>
                         <li><a href="search.php">Search</a></li>
                         <li><a href="profile.php" class="external">Profile</a></li>
                         <li><a href="logout.php">Logout</a></li>
@@ -83,3 +64,4 @@ if (!isset($_SESSION["user_id"])) {
             </div>
         </div>
         <br><br><br>
+        

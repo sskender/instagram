@@ -7,12 +7,14 @@
 session_start();
 if (isset($_SESSION["user_id"])) {
     header("Location: home.php");
+    exit();
 }
 
 
-
 require_once("../config.php");
+require_once(SRC_PATH."database.php");
 require_once(SRC_PATH."login.register.php");
+
 $login_error = $register_error = NULL;
 $value_user = $value_email = NULL;
 

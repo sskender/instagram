@@ -1,7 +1,8 @@
 <?php
 
 require_once("../config.php");
-require(INCLUDES_PATH."header.php");
+require(LIB_PATH."session.manager.php");
+include_once(INCLUDES_PATH."header.php");
 
 ?>
 
@@ -12,18 +13,12 @@ require(INCLUDES_PATH."header.php");
  *  Validate user in URL
  *  If user is invalid, redirect to profile page
  */
-if (!empty($_GET["user"])) {
+if (!empty($_GET["user"]) && preg_match(REGEX_USER, $_GET["user"])) {
 
-    $redirect_page = true;
+    $user_current_profile = new User($_GET["user"]);
 
-    if (preg_match(REGEX_USER, $_GET["user"])) {
-        $user_current_profile = new User($_GET["user"]);
-        if ($user_current_profile->user_id != NULL) {
-            $redirect_page = false;
-        }
-    }
-
-    if ($redirect_page) {
+    if ($user_current_profile->user_id == NULL) {
+        unset($user_current_profile);
         header("Location: profile.php");
     }
 
@@ -103,17 +98,13 @@ if (!empty($_GET["user"])) {
         <section id="update_profile">
             <?php
             /**
-            *  Update profile informations integration
-            */
+             *  Update profile informations integration
+             */
             if ($user_logged_in->user_id == $user_current_profile->user_id) { 
-                include(INCLUDES_PATH."update.profile.php");
+                include(LIB_PATH."update.profile.php");
             }
             ?>
         </section>
 
 
-<?php
-
-require_once(INCLUDES_PATH."footer.php");
-
-?>
+<?php include_once(INCLUDES_PATH."footer.php"); ?>

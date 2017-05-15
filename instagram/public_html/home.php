@@ -26,7 +26,7 @@ include_once(INCLUDES_PATH."header.php");
                      </h4>
                 </div>
                 <div>
-                    <img src="<?php echo UPLOAD_PHOTO_PATH.$photo_i->photo_hash; ?>" class="img-responsive" alt="Uploaded photo" width="1000">
+                    <img src="<?php echo UPLOAD_PATH.$photo_i->photo_hash; ?>" class="img-responsive" alt="Uploaded photo" width="1000">
                 </div>
                 <!--
                 <div class="read-more padding text-center">

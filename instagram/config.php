@@ -21,8 +21,7 @@ define("LIB_PATH",      "../resources/lib/");
 /**
  *  User paths
  */
-define("UPLOAD_PHOTO_PATH",   "../bucket/uploads/");
-define("UPLOAD_PROFILE_PATH", "../bucket/profiles/");
+define("UPLOAD_PATH",   "../bucket/");
 
 
 /**

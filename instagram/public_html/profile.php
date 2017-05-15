@@ -35,7 +35,7 @@ if (!empty($_GET["user"]) && preg_match(REGEX_USER, $_GET["user"])) {
             <header>
                 <h2><?php echo $user_current_profile->username; ?>'s profile</h2>
             </header>
-            <p><img id="profile_pic" height=200 width=200 src="images/default.jpg" alt="avatar"></p>
+            <p><img id="profile_pic" height=200 width=200 src="<?php echo ($user_current_profile->profile_photo_hash != NULL) ? UPLOAD_PATH.$user_current_profile->profile_photo_hash : "images/default.jpg" ?>" alt="avatar"></p>
             <p>Followers: <acronym title="View followers"><a href="search.php?followers=<?php echo $user_current_profile->username; ?>"><span><?php echo $user_current_profile->followers_number; ?></span></a></acronym></p>
             <p>Following: <acronym title="View following"><a href="search.php?following=<?php echo $user_current_profile->username; ?>"><span><?php echo $user_current_profile->following_number; ?></span></a></acronym></p>
             <p>Uploads: <acronym title="View uploads"><a><span><?php echo $user_current_profile->uploaded_photos_number; ?></span></a></acronym></p>

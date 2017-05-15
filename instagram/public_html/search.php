@@ -12,7 +12,7 @@ function displayBlock(&$user_found) {
 ?>
         <br>
         <section class="user_block">
-            <p><img id="profile_pic" height=75 width=75 src="images/default.jpg" alt="avatar"></p>
+            <p><img id="profile_pic" height=75 width=75 src="<?php echo ($user_found->profile_photo_hash != NULL) ? UPLOAD_PATH.$user_found->profile_photo_hash : "images/default.jpg" ?>" alt="avatar"></p>
             <acronym title="View profile"><h4><a href="profile.php?user=<?php echo $user_found->username; ?>"><?php echo $user_found->username; ?></a></h4></acronym>
             <div id="follow">
                 Followers: <acronym title="View followers"><a href="search.php?followers=<?php echo $user_found->username; ?>"><span><?php echo $user_found->followers_number; ?></span></a></acronym><br>

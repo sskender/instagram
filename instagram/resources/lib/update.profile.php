@@ -78,15 +78,12 @@ if (isset($_POST["newemail"])) {
 /**
  *  Update profile picture container
  */
-$result_new_profile = NULL;
 ?>
                 <section>
-                    <form method="post" class="contact-form" action="?">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <input class="btn dark-blue-bordered-btn normal-btn" type="submit" class="button submit" id="profile-update-button" value="Update profile">
-                        </div>
+                    <form method="post" class="contact-form" action="upload.php" enctype="multipart/form-data">
+                        <input type="file" name="profile-upload" id="fileToUpload">
+                        <input type="submit" value="Upload Image" name="submit">
                     </form>
-                    <span><?php echo $result_new_profile; ?></span>
                 </section>
                 <br>
             </div>

@@ -51,10 +51,11 @@ class User {
 
         if ($this->user_id != NULL) {
 
+            $this->getProfilePhotoHash();
+            $this->getNumberOfUploads();
             $this->getFollowers();
             $this->getFollowing();
             $this->getLastLoginInfo();
-            $this->getNumberOfUploads();
 
         }
 
@@ -120,6 +121,22 @@ class User {
     }
 
 
+    private function getProfilePhotoHash() {
+
+        $query = "SELECT photo_hash FROM photos WHERE user_id=$this->user_id";
+        $response = db_query($query);
+
+        if ($response) {
+
+            if (mysqli_num_rows($response) > 0) {
+                $this->profile_photo_hash = mysqli_fetch_array($response)["photo_hash"];
+            }
+        } else {
+
+        }
+    }
+
+
     private function getLastLoginInfo() {
         /**
          *  Grab informations about last login:
@@ -171,6 +188,45 @@ class User {
         } else {
             return false;
         }
+    }
+
+    public function updateProfilePhoto($hash) {
+
+        $query = "SELECT photo_id FROM photos WHERE user_id=$this->user_id";
+        $response = db_query($query);
+
+        if ($response) {
+
+            if (mysqli_num_rows($response) > 0) {
+                /**
+                 *  Entry exists, update row
+                 */
+                $query = "UPDATE photos SET photo_hash='$hash' WHERE user_id=$this->user_id";
+                $response = db_query($query);
+
+                if ($response) {
+
+                    $this->profile_photo_hash = $hash;
+                    return true;
+                }
+
+            } else {
+                /**
+                 *  Entry does not exist, insert new row
+                 */
+                $query = "INSERT INTO photos (user_id,photo_hash) VALUES ($this->user_id, '$hash')";
+                $response = db_query($query);
+
+                if ($response) {
+
+                    $this->profile_photo_hash = $hash;
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     }
 
 
@@ -278,10 +334,9 @@ class User {
 
             $this->uploaded_photos_number++;
             return true;
-            
-        } else {
-            return false;
         }
+
+        return false;
 
     }
 

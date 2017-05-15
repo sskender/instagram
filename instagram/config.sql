@@ -39,7 +39,7 @@ CREATE TABLE follows (
 CREATE TABLE photos (
     photo_id        INTEGER UNSIGNED    NOT NULL    AUTO_INCREMENT  PRIMARY KEY,
     user_id         INTEGER UNSIGNED    NOT NULL,
-    photo_hash      VARCHAR(52)         NOT NULL
+    photo_hash      VARCHAR(60)         NOT NULL
 );
 
 
@@ -47,7 +47,7 @@ CREATE TABLE photos (
 CREATE TABLE uploads (
     photo_id        INTEGER UNSIGNED    NOT NULL    AUTO_INCREMENT  PRIMARY KEY,
     user_id         INTEGER UNSIGNED    NOT NULL,
-    photo_hash      VARCHAR(52)         NOT NULL,
+    photo_hash      VARCHAR(60)         NOT NULL,
     timestamp       DATETIME            NOT NULL    DEFAULT NOW()
 );
 

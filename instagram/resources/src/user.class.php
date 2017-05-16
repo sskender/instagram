@@ -347,7 +347,10 @@ class User {
      */
     public function dumpHomePosts() {
 
-        $followingIDs = implode(",", $this->following_list) . "," . (string)$this->user_id;
+        $followingIDs = (string)$this->user_id;
+        if (!empty($this->following_list)) {
+            $followingIDs = $followingIDs . "," . implode(",", $this->following_list);
+        }
         $query = "SELECT * FROM uploads WHERE user_id IN ($followingIDs) ORDER BY photo_id DESC";
         $response = db_query($query);
 

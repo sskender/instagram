@@ -27,11 +27,11 @@ if (isset($_POST["submit_login"])) {
     $username = trim($_POST["username"]);
     $password = $_POST["password"];
 
-    if (!preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username) && !filter_var($username, FILTER_VALIDATE_EMAIL)) {
+    if (!preg_match(REGEX_USER, $username) && !filter_var($username, FILTER_VALIDATE_EMAIL)) {
         $login_error = "Invalid username or password!";
     }
 
-    if (!preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password)) {
+    if (!preg_match(REGEX_PASS, $password)) {
         $login_error = "Invalid username or password!";
     }
 
@@ -73,7 +73,7 @@ if (isset($_POST["submit_register"])) {
     $password2 = $_POST["passwordsignup_confirm"];
 
     // check passwords
-    if (!preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password1) || !preg_match("/^[a-zA-Z0-9-_.@$#!%&]{6,50}+$/", $password2)) {
+    if (!preg_match(REGEX_PASS, $password1) || !preg_match(REGEX_PASS, $password2)) {
         $register_error = "Invalid password!";
     }
     elseif ($password1 != $password2) {
@@ -88,7 +88,7 @@ if (isset($_POST["submit_register"])) {
     }
 
     // check username
-    if (!preg_match("/^[a-zA-Z0-9-_.]{5,20}+$/", $username)) {
+    if (!preg_match(REGEX_USER, $username)) {
         $register_error = "Invalid username!";
     } else {
         $value_user = $username;
